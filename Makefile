@@ -65,10 +65,10 @@ OBJFILES =
 all:	lcs_rec_memo lcs_rec_naive
 
 lcs_rec_memo:	lcs_rec_memo.o $(OBJFILES)
-	$(CC) $(CFLAGS) -o lcs_rec_memo lcs_rec_memo.o $(OBJFILES) $(CLIBFLAGS)
+	$(CC) $(CFLAGS) -o lcs2 lcs_rec_memo.o $(OBJFILES) $(CLIBFLAGS)
 
 lcs_rec_naive:	lcs_rec_naive.o $(OBJFILES)
-	$(CC) $(CFLAGS) -o lcs_rec_naive lcs_rec_naive.o $(OBJFILES) $(CLIBFLAGS)
+	$(CC) $(CFLAGS) -o lcs1 lcs_rec_naive.o $(OBJFILES) $(CLIBFLAGS)
 
 #
 # Dependencies

@@ -94,7 +94,7 @@ int main(int argc, char** argv){
     int ittr;
     sscanf (argv[1], "%i", &ittr);
     
-    printf("Timing, Nieve Recursive implementation:\n");
+    printf("Timing, Recursive implementation with Memoization:\n");
     double ret = timeit( lcs_rec_memo, ittr, argv[2],argv[3]);
     printf("%f\n", ret);
     
