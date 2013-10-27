@@ -54,7 +54,8 @@ C_FILES =	lcs_rec_memo.c lcs_rec_naive.c
 PS_FILES =	
 S_FILES =	
 H_FILES =	lcs.h timeit.h
-SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES) $(S_FILES)
+PY_FILES =  runner.py
+SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES) $(S_FILES) $(PY_FILES)
 .PRECIOUS:	$(SOURCEFILES)
 OBJFILES =	
 
@@ -63,6 +64,7 @@ OBJFILES =
 #
 
 all:	lcs_rec_memo lcs_rec_naive
+	chmod +x runner.py
 
 lcs_rec_memo:	lcs_rec_memo.o $(OBJFILES)
 	$(CC) $(CFLAGS) -o lcs2 lcs_rec_memo.o $(OBJFILES) $(CLIBFLAGS)
@@ -91,5 +93,5 @@ clean:
 	-/bin/rm $(OBJFILES) lcs_rec_memo.o core 2> /dev/null
 
 realclean:        clean
-	-/bin/rm -rf lcs_rec_memo
-	-/bin/rm -rf lcs_rec_naive
+	-/bin/rm -rf lcs1
+	-/bin/rm -rf lcs2
