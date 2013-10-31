@@ -95,8 +95,7 @@ int main(int argc, char** argv){
     sscanf (argv[1], "%i", &ittr);
     
     printf("Timing, Recursive implementation with Memoization:\n");
-    double ret = timeit( lcs_rec_memo, ittr, argv[2],argv[3]);
-    printf("%f\n", ret);
+    timeit( lcs_rec_memo, ittr, argv[2],argv[3]);
     
     return 0;
 }

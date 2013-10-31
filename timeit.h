@@ -18,28 +18,27 @@ struct rusage ruse;
 /*********************************************************************
  * Times an LCS function by repeatedly calling it `ittr` times with 
  * the inputs `s1` and `s2`. It will return the difference in time, 
- * and leaves averaging up to the caller. ASSUMES VOID RETURN TYPE.
+ * and leaves averaging up to the caller.
  *********************************************************************/
-double timeit( int (*lcs)(char*,char*),
+void timeit( int (*lcs)(char*,char*,char*),
                int ittr, 
                char* s1, char* s2 )
 {
     char* ans;
     double start, end;
     int i=0;
-    
+    int numrecurse=0;
+
     // Loop over lcs calculation.
     start = CPUTIME;
     while( i<ittr ){
-        lcs(s1, s2);
+        numrecurse = lcs(s1, s2, ans);
         i++;
     }
     end = CPUTIME;
-
-    // Memory management.
-    //delete[] ans;
-
-    // Return difference in seconds
-    return (end-start);
+    
+    // Output # of recursive calls and time.
+    printf("# of Recursive Calls: %d\nTime for %d runs (in ms):%d\nAverage Time:%f", 
+            numrecurse, ittr, (end-start), (end-start)/ittr);
 }
 
