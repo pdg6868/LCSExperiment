@@ -29,7 +29,7 @@ void print_lcs(int** b, char* X, int i, int j){
 }
 
 //LCS algorithm as on pg. 394 of textbook
-int lcs_rec_memo(char* X, char* Y){
+int lcs_rec_memo(char* X, char* Y, char* ans){
     //To move outside function and pass in?
     int m = strlen(X);
     int n = strlen(Y);
@@ -91,12 +91,15 @@ int lcs_rec_memo(char* X, char* Y){
 // This is ensured by the main script
 int main(int argc, char** argv){
     
+    char* ansref = (char*)malloc( strlen(argv[2]) * sizeof(char) );
     int ittr;
     sscanf (argv[1], "%i", &ittr);
-    
+
     printf("Timing, Recursive implementation with Memoization:\n");
-    timeit( lcs_rec_memo, ittr, argv[2],argv[3]);
+    timeit( lcs_rec_memo, ittr, argv[2],argv[3], ansref );
     
+    free( ansref );
+
     return 0;
 }
 

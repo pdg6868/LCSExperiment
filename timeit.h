@@ -22,9 +22,9 @@ struct rusage ruse;
  *********************************************************************/
 void timeit( int (*lcs)(char*,char*,char*),
                int ittr, 
-               char* s1, char* s2 )
+               char* s1, char* s2,
+               char* ans )
 {
-    char* ans;
     double start, end;
     int i=0;
     int numrecurse=0;
@@ -38,7 +38,7 @@ void timeit( int (*lcs)(char*,char*,char*),
     end = CPUTIME;
     
     // Output # of recursive calls and time.
-    printf("# of Recursive Calls: %d\nTime for %d runs (in ms):%d\nAverage Time:%f", 
+    printf("# of Recursive Calls: %d\nTime for %d runs (in ms):%f\nAverage Time:%f", 
             numrecurse, ittr, (end-start), (end-start)/ittr);
 }
 
