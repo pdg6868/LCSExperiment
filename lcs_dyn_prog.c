@@ -69,10 +69,8 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
 
     //Debug Statements.
     //printf("Length of LCS: %d \n", c[m][n]);
-
-    //Do we need the io here?
-    //printf("Length of LCS: %d \n", c[m][n]);
     
+    print_lcs(b,X,m,n);
 
     //Free C and B
     for(int i=0; i <= m; i++) {
@@ -93,6 +91,8 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
 int main(int argc, char** argv){
    
     int ittr, x, y;
+    extern int memusage;
+    memusage = 0;
     sscanf (argv[1], "%i", &ittr);
    
     scanf("%d %d", &x, &y);
@@ -105,9 +105,14 @@ int main(int argc, char** argv){
     //printf("%s\n%s\n", a,b);
 
     printf("Timing, Dynamic Programming implementation:\n");
-    timeit( lcs_dyn_prog, ittr, a, b, ansref );
-    extern int memusage;
+    double avg = timeit( lcs_dyn_prog, ittr, a, b, ansref );
+    
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
+    // Time complexity is Theta m*n
+    // So time const is avgTime/(m*n)
+    printf("Time Const: %e\n", avg/(x*y));
+    
+    
     free( ansref );
 
     return 0;

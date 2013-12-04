@@ -20,7 +20,7 @@ struct rusage ruse;
  * the inputs `s1` and `s2`. It will return the difference in time, 
  * and leaves averaging up to the caller.
  *********************************************************************/
-void timeit( int (*lcs)(char*,char*,char*),
+double timeit( int (*lcs)(char*,char*,char*),
                int ittr, 
                char* s1, char* s2,
                char* ans )
@@ -37,8 +37,11 @@ void timeit( int (*lcs)(char*,char*,char*),
     }
     end = CPUTIME;
     
+    double avgTime = (end-start)/ittr;
     // Output # of recursive calls and time.
     printf("# of Recursive Calls: %d\nTime for %d runs (in ms):%f\nAverage Time:%f\n", 
-            numrecurse, ittr, (end-start), (end-start)/ittr);
+            numrecurse, ittr, (end-start), avgTime);
+    
+    return avgTime;
 }
 
