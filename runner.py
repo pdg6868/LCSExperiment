@@ -50,10 +50,9 @@ def main():
         str1,str2 = tuple(args.strings)
 
     for t in runlist:
-         p = Popen( [ "./lcs"+str(t), itter], stdin=PIPE, shell=True )
-         p.communicate( "{0} {1}\n".format( len(str1), len(str2) ) )
-         p.communicate( "{2} {3}\n".format( str1, str2 ) )
-         p.wait()
-
+         p = Popen( "./lcs{0} {1}".format( t, itter), stdin=PIPE, stdout=PIPE, shell=True, close_fds=True )
+         p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  str1, str2 ) )
+         (out, err) = p.communicate()
+         print out
    
 if __name__ == "__main__": main();
