@@ -67,11 +67,11 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
     }
     
     //Do we need the io here?
-    //printf("Length of LCS: %d \n", c[m][n]);
+    printf("Length of LCS: %d \n", c[m][n]);
     
     //print_lcs(b,X,m,n);
     //printf("\n");
-    int toRet = c[m][n];
+    int toRet = 0;
     
     //Free C and B
     for(int i=0; i <= m; i++) {
@@ -94,9 +94,20 @@ int main(int argc, char** argv){
     char* ansref = (char*)malloc( strlen(argv[2]) * sizeof(char) );
     int ittr;
     sscanf (argv[1], "%i", &ittr);
+    
+    int x;
+    int y;
+    
+    scanf("%d %d", &x, &y);
+    char* a = (char*)malloc(x * sizeof(char)+1);
+    char* b = (char*)malloc(y * sizeof(char)+1);
+    
+    scanf("%s %s", a, b);
+    
+    //printf("%s\n%s\n", a,b);
 
     printf("Timing, Dynamic Programming implementation:\n");
-    timeit( lcs_dyn_prog, ittr, argv[2],argv[3], ansref );
+    timeit( lcs_dyn_prog, ittr, a, b, ansref );
     
     free( ansref );
 

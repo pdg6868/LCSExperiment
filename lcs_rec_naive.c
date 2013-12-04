@@ -33,8 +33,19 @@ int main(int argc, char** argv){
     int ittr;
     sscanf (argv[1], "%i", &ittr);
     
+    int x;
+    int y;
+    
+    scanf("%d %d", &x, &y);
+    char* a = (char*)malloc(x * sizeof(char)+1);
+    char* b = (char*)malloc(y * sizeof(char)+1);
+    
+    scanf("%s %s", a, b);
+    
+    //printf("%s\n%s\n", a,b);
+    
     printf("Timing, Nieve Recursive implementation:\n");
-    timeit( lcs_naive, ittr, argv[2],argv[3], ansref);
+    timeit( lcs_naive, ittr, a, b, ansref);
     
     free( ansref );
 
