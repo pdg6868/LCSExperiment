@@ -66,13 +66,11 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
         }
     }
     
-    //Do we need the io here?
-    printf("Length of LCS: %d \n", c[m][n]);
-    
+    //Debug Statements. \\
+    //printf("Length of LCS: %d \n", c[m][n]);
     //print_lcs(b,X,m,n);
     //printf("\n");
-    int toRet = 0;
-    
+
     //Free C and B
     for(int i=0; i <= m; i++) {
         free(c[i]);
@@ -83,7 +81,7 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
     }
     free(b);
     
-    return toRet;
+    return 0; // LCS needs to return number of recursions.
 }
 
 //This main assumes that str1 is in argv[1]
@@ -91,16 +89,13 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
 // This is ensured by the main script
 int main(int argc, char** argv){
    
-    char* ansref = (char*)malloc( strlen(argv[2]) * sizeof(char) );
-    int ittr;
+    int ittr, x, y;
     sscanf (argv[1], "%i", &ittr);
-    
-    int x;
-    int y;
-    
+   
     scanf("%d %d", &x, &y);
     char* a = (char*)malloc(x * sizeof(char)+1);
     char* b = (char*)malloc(y * sizeof(char)+1);
+    char* ansref = (char*)malloc( x * sizeof(char) );
     
     scanf("%s %s", a, b);
     

@@ -5,8 +5,8 @@ __description__ = """Runner script for the Fundamentals of Algorithms
 group project for timing and analyzing LCS functions.
 """
 
-import os
 import argparse
+from subprocess import Popen, PIPE
 
 def setup_argparse():
     prsr = argparse.ArgumentParser( description=__description__,
@@ -14,7 +14,7 @@ def setup_argparse():
     prsr.add_argument('-a', '--all', action='store_true', help="Run all LCS versions in sequence.")
     prsr.add_argument('-s', '--select',metavar='N',default=[1], nargs='+', type=int, help="Pass a list of tests to run by number.")
     prsr.add_argument('-l', '--list', action='store_true', help="List runnable tests.")
-    prsr.add_argument('-d', '--ittr', nargs=1, default=100, metavar='N',type=long, help="The number of times to iterate")
+    prsr.add_argument('-d', '--ittr', action='store', default=100, metavar='N',type=long, help="The number of times to iterate")
 
     # Can either input via std or on command line, but not both.
     inputGroup = prsr.add_mutually_exclusive_group(required=True)
@@ -38,7 +38,7 @@ def main():
     if( args.list ):
         list_tests()
         return
-
+    
     itter   = args.ittr
     runlist = args.select
     if( args.all ):
@@ -50,7 +50,9 @@ def main():
         str1,str2 = tuple(args.strings)
 
     for t in runlist:
-        os.system("./lcs{0} {1} {2} {3}".format(t,itter,str1,str2))
-
+         p = Popen( "./lcs{0} {1}".format( t, itter), stdin=PIPE, stdout=PIPE, shell=True, close_fds=True )
+         p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  str1, str2 ) )
+         (out, err) = p.communicate()
+         print out
    
 if __name__ == "__main__": main();

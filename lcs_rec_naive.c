@@ -27,22 +27,16 @@ int lcs_naive(char* A, char* B, char* ans)
 //and str2 is in argv[2]
 // This is ensured by the main script
 int main(int argc, char** argv){
-    
-    char* ansref = (char*)malloc( strlen(argv[2]) * sizeof(char) );
 
-    int ittr;
+    int ittr,x,y;
     sscanf (argv[1], "%i", &ittr);
-    
-    int x;
-    int y;
-    
     scanf("%d %d", &x, &y);
+
     char* a = (char*)malloc(x * sizeof(char)+1);
     char* b = (char*)malloc(y * sizeof(char)+1);
+    char* ansref = (char*)malloc( x * sizeof(char) );
     
     scanf("%s %s", a, b);
-    
-    //printf("%s\n%s\n", a,b);
     
     printf("Timing, Nieve Recursive implementation:\n");
     timeit( lcs_naive, ittr, a, b, ansref);
