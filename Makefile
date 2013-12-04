@@ -50,7 +50,7 @@ CCLIBFLAGS =
 
 
 CPP_FILES =	
-C_FILES =	lcs_rec_memo.c lcs_rec_naive.c
+C_FILES =	lcs_dyn_prog.c lcs_rec_naive.c
 PS_FILES =	
 S_FILES =	
 H_FILES =	lcs.h timeit.h
@@ -63,11 +63,11 @@ OBJFILES =
 # Main targets
 #
 
-all:	lcs_rec_memo lcs_rec_naive
+all:	lcs_dyn_prog lcs_rec_naive
 	chmod +x runner.py
 
-lcs_rec_memo:	lcs_rec_memo.o $(OBJFILES)
-	$(CC) $(CFLAGS) -o lcs2 lcs_rec_memo.o $(OBJFILES) $(CLIBFLAGS)
+lcs_dyn_prog:	lcs_dyn_prog.o $(OBJFILES)
+	$(CC) $(CFLAGS) -o lcs3 lcs_dyn_prog.o $(OBJFILES) $(CLIBFLAGS)
 
 lcs_rec_naive:	lcs_rec_naive.o $(OBJFILES)
 	$(CC) $(CFLAGS) -o lcs1 lcs_rec_naive.o $(OBJFILES) $(CLIBFLAGS)
@@ -76,7 +76,7 @@ lcs_rec_naive:	lcs_rec_naive.o $(OBJFILES)
 # Dependencies
 #
 
-lcs_rec_memo.o:	lcs.h timeit.h
+lcs_dyn_prog.o:	lcs.h timeit.h
 lcs_rec_naive.o:	lcs.h timeit.h
 
 #
@@ -90,8 +90,8 @@ archive.tgz:	$(SOURCEFILES) Makefile
 
 clean:
 	-/bin/rm $(OBJFILES) lcs_rec_naive.o core 2> /dev/null
-	-/bin/rm $(OBJFILES) lcs_rec_memo.o core 2> /dev/null
+	-/bin/rm $(OBJFILES) lcs_dyn_prog.o core 2> /dev/null
 
 realclean:        clean
 	-/bin/rm -rf lcs1
-	-/bin/rm -rf lcs2
+	-/bin/rm -rf lcs3

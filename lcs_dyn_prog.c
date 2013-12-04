@@ -1,5 +1,5 @@
 //
-//  lcs.c
+//  lcs_dyn_prog.c
 //  Multiple Implemetations of the LCS algorithm
 //
 //  Authors: Pat Gillis and Alex Dean
@@ -29,7 +29,7 @@ void print_lcs(int** b, char* X, int i, int j){
 }
 
 //LCS algorithm as on pg. 394 of textbook
-int lcs_rec_memo(char* X, char* Y, char* ans){
+int lcs_dyn_prog(char* X, char* Y, char* ans){
     //To move outside function and pass in?
     int m = strlen(X);
     int n = strlen(Y);
@@ -37,11 +37,11 @@ int lcs_rec_memo(char* X, char* Y, char* ans){
     // Create 'C' and 'B' matrices
     int** c = (int**)malloc((m+1) * sizeof(int*));
     for(int i=0; i <= m; i++) {
-        c[i] = (int *)malloc(sizeof(int)*n);
+        c[i] = (int *)malloc(sizeof(int)*(n+1));
     }
     int** b = (int**)malloc((m+1) * sizeof(int*));
     for(int i=0; i <= m; i++) {
-        b[i] = (int *)malloc(sizeof(int)*n);
+        b[i] = (int *)malloc(sizeof(int)*(n+1));
     }
  
     // Fill first column and first row of 'C' with 0.
@@ -67,7 +67,7 @@ int lcs_rec_memo(char* X, char* Y, char* ans){
     }
     
     //Do we need the io here?
-    //printf("Length of LCS: %d \n", c[m][n]);
+    printf("Length of LCS: %d \n", c[m][n]);
     
     print_lcs(b,X,m,n);
     //printf("\n");
@@ -90,13 +90,13 @@ int lcs_rec_memo(char* X, char* Y, char* ans){
 //and str2 is in argv[2]
 // This is ensured by the main script
 int main(int argc, char** argv){
-    
+   
     char* ansref = (char*)malloc( strlen(argv[2]) * sizeof(char) );
     int ittr;
     sscanf (argv[1], "%i", &ittr);
 
-    printf("Timing, Recursive implementation with Memoization:\n");
-    timeit( lcs_rec_memo, ittr, argv[2],argv[3], ansref );
+    printf("Timing, Dynamic Programming implementation:\n");
+    timeit( lcs_dyn_prog, ittr, argv[2],argv[3], ansref );
     
     free( ansref );
 
