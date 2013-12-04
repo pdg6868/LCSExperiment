@@ -16,4 +16,13 @@
 void lcs_rec(char* X, char* Y);
 void print_lcs(int** b, char* X, int i, int j);
 
+void* lcs_malloc (size_t size);
+
+int memusage = 0;
+void* lcs_malloc (size_t size)
+{
+    memusage += (int)size;
+    return malloc(size);
+}
+
 #endif

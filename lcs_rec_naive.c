@@ -40,7 +40,8 @@ int main(int argc, char** argv){
     
     printf("Timing, Nieve Recursive implementation:\n");
     timeit( lcs_naive, ittr, a, b, ansref);
-    
+    extern int memusage;
+    printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     free( ansref );
 
     return 0;

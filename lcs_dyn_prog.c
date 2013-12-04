@@ -35,13 +35,13 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
     int n = strlen(Y);
 
     // Create 'C' and 'B' matrices
-    int** c = (int**)malloc((m+1) * sizeof(int*));
+    int** c = (int**)lcs_malloc((m+1) * sizeof(int*));
     for(int i=0; i <= m; i++) {
-        c[i] = (int *)malloc(sizeof(int)*(n+1));
+        c[i] = (int *)lcs_malloc(sizeof(int)*(n+1));
     }
-    int** b = (int**)malloc((m+1) * sizeof(int*));
+    int** b = (int**)lcs_malloc((m+1) * sizeof(int*));
     for(int i=0; i <= m; i++) {
-        b[i] = (int *)malloc(sizeof(int)*(n+1));
+        b[i] = (int *)lcs_malloc(sizeof(int)*(n+1));
     }
  
     // Fill first column and first row of 'C' with 0.
@@ -66,8 +66,14 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
         }
     }
     
+<<<<<<< HEAD
     //Debug Statements. \\
     //printf("Length of LCS: %d \n", c[m][n]);
+=======
+    //Do we need the io here?
+    //printf("Length of LCS: %d \n", c[m][n]);
+    
+>>>>>>> Added lcs_malloc to track dynamic mem usage
     //print_lcs(b,X,m,n);
     //printf("\n");
 
@@ -103,7 +109,8 @@ int main(int argc, char** argv){
 
     printf("Timing, Dynamic Programming implementation:\n");
     timeit( lcs_dyn_prog, ittr, a, b, ansref );
-    
+    extern int memusage;
+    printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     free( ansref );
 
     return 0;
