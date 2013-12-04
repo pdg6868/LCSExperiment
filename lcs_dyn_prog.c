@@ -66,16 +66,13 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
         }
     }
     
-<<<<<<< HEAD
-    //Debug Statements. \\
+
+    //Debug Statements.
     //printf("Length of LCS: %d \n", c[m][n]);
-=======
+
     //Do we need the io here?
     //printf("Length of LCS: %d \n", c[m][n]);
     
->>>>>>> Added lcs_malloc to track dynamic mem usage
-    //print_lcs(b,X,m,n);
-    //printf("\n");
 
     //Free C and B
     for(int i=0; i <= m; i++) {
