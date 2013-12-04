@@ -50,7 +50,7 @@ CCLIBFLAGS =
 
 
 CPP_FILES =	
-C_FILES =	lcs_dyn_prog.c lcs_rec_naive.c
+C_FILES =	lcs_dyn_prog.c lcs_rec_naive.c lcs_memo.c
 PS_FILES =	
 S_FILES =	
 H_FILES =	lcs.h timeit.h
@@ -63,7 +63,7 @@ OBJFILES =
 # Main targets
 #
 
-all:	lcs_dyn_prog lcs_rec_naive
+all:	lcs_dyn_prog lcs_rec_naive lcs_memo
 	chmod +x runner.py
 
 lcs_dyn_prog:	lcs_dyn_prog.o $(OBJFILES)
@@ -71,6 +71,9 @@ lcs_dyn_prog:	lcs_dyn_prog.o $(OBJFILES)
 
 lcs_rec_naive:	lcs_rec_naive.o $(OBJFILES)
 	$(CC) $(CFLAGS) -o lcs1 lcs_rec_naive.o $(OBJFILES) $(CLIBFLAGS)
+
+lcs_memo:	lcs_memo.o $(OBJFILES)
+	$(CC) $(CFLAGS) -o lcs2 lcs_memo.o $(OBJFILES) $(CLIBFLAGS)
 
 #
 # Dependencies
