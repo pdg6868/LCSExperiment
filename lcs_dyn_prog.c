@@ -45,8 +45,8 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
     }
  
     // Fill first column and first row of 'C' with 0.
-    for(int i = 1; i < m; i++){c[i][0] = 0;}
-    for(int j = 0; j < n; j++){c[0][j] = 0;}
+    for(int i = 1; i <= m; i++){c[i][0] = 0;}
+    for(int j = 0; j <= n; j++){c[0][j] = 0;}
     
     //For each character in each string
     for(int i = 1; i <= m; i++){
@@ -67,9 +67,9 @@ int lcs_dyn_prog(char* X, char* Y, char* ans){
     }
     
     //Do we need the io here?
-    printf("Length of LCS: %d \n", c[m][n]);
+    //printf("Length of LCS: %d \n", c[m][n]);
     
-    print_lcs(b,X,m,n);
+    //print_lcs(b,X,m,n);
     //printf("\n");
     int toRet = c[m][n];
     

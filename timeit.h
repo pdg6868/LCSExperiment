@@ -38,7 +38,7 @@ void timeit( int (*lcs)(char*,char*,char*),
     end = CPUTIME;
     
     // Output # of recursive calls and time.
-    printf("# of Recursive Calls: %d\nTime for %d runs (in ms):%f\nAverage Time:%f", 
+    printf("# of Recursive Calls: %d\nTime for %d runs (in ms):%f\nAverage Time:%f\n", 
             numrecurse, ittr, (end-start), (end-start)/ittr);
 }
 
