@@ -13,7 +13,7 @@
 
 
 //Basic Recursive as Implied by 15.1 on pg. 392
-int lcs_naive(char* X, char* Y, int m, int n, char* ans)
+int lcs_naive(char* X, char* Y, int m, int n, char** ans)
 {
 	if (m == 0 || n == 0)
         return 0;
@@ -39,7 +39,7 @@ int main(int argc, char** argv){
     scanf("%s %s", a, b);
     
     printf("Timing, Nieve Recursive implementation:\n");
-    double avg = timeit( lcs_naive, ittr, a, b, x, y, ansref);
+    double avg = timeit( lcs_naive, ittr, a, b, x, y, &ansref);
     extern int memusage;
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     // Time complexity is O(2^{m*n})

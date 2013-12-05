@@ -16,16 +16,19 @@
 #define iMAT int**
 #define iMAT_ROW int*
 
+// So we can see mutable functions.
+#define CSTR char*
+
 // Inline functions
 #define MAX( X, Y ) ((X) > (Y) ? (X) : (Y))
 
-void algorithmA( int m, int n, char* A, char* B, iMAT L );
-void algorithmB( int m, int n, char* A, char* B, iMAT_ROW* L );
-int algorithmC( int m, int n, char* A, char* B, char* C );
-int Hirshberg( char* A, char* B, int m, int n, char* LCS );
-void strrev( char* s );
-void strsplit( int len, int i, const char* s, char* f, char* b );
-void blankC( int max, char* C );
+void algorithmA( int m, int n, CSTR A, CSTR B, iMAT* L );
+void algorithmB( int m, int n, CSTR A, CSTR B, iMAT_ROW* L );
+int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C );
+int Hirshberg( CSTR A, CSTR B, int m, int n, CSTR* LCS );
+void strrev( CSTR s );
+void strsplit( int len, int i, CSTR s, CSTR* f, CSTR* b );
+void blankC( int max, CSTR* C );
 
 void debug(const char* msg){
     printf(msg);fflush(stdout);
@@ -50,18 +53,20 @@ void debug_printarray( const int l, const int* a ){
  * not need as much space. We do not use this algorithm, it is
  * here for completeness sake. 
  **/
-void algorithmA( int m, int n, char* A, char* B, iMAT L ){
+void algorithmA( int m, int n, char* A, char* B, iMAT* L ){
+    iMAT LL = *L;
+
     // Initialize L Table.
-    for( int i=0; i <= m; i++ ){ L[i][0]=0; }
-    for( int j=0; j <= n; j++ ){ L[0][j]=0; }
+    for( int i=0; i <= m; i++ ){ LL[i][0]=0; }
+    for( int j=0; j <= n; j++ ){ LL[0][j]=0; }
 
     // Creation of L table.
     for( int i=1; i <= m; i++ ){
         for(int j=1; j <= n; j++ ){
             if( A[i-1] == B[j-1] ){
-                L[i][j] = L[i-1][j-1]+1;
+                LL[i][j] = LL[i-1][j-1]+1;
             }else{
-                L[i][j] = MAX( L[i][j-1], L[i-1][j] );
+                LL[i][j] = MAX( LL[i][j-1], LL[i-1][j] );
             }
         }
     }
@@ -77,19 +82,19 @@ void algorithmA( int m, int n, char* A, char* B, iMAT L ){
  * Time Complexity: O(mn)
  * Space Complexity: O(m+n)
  **/
-void algorithmB( int m, int n, char* A, char* B, iMAT_ROW* LL ){
+void algorithmB( int m, int n, CSTR A, CSTR B, iMAT_ROW* LL ){
     // Initialize temporary K table (size 2xN).
     iMAT K = (iMAT)lcs_malloc( 2 * sizeof(iMAT_ROW) );
     K[0] = (iMAT_ROW)lcs_malloc( (n+1) * sizeof(int) );
     K[1] = (iMAT_ROW)lcs_malloc( (n+1) * sizeof(int) );
     for( int j=0; j<=n; j++ ){ K[0][j]=0; K[1][j]=0; }
-    
+
     // Fill temporary K table.
     for( int i=1; i <= m; i++ ){
-         memcpy(K[0], K[1], (n+1)*sizeof(int));
+        memcpy(K[0], K[1], (n+1)*sizeof(int));
         for( int j=1; j <= n; j++ ){
             if( A[i-1] == B[j-1] ){
-                K[1][j] = K[0][j-1]+1;
+                K[1][j] = K[0][j-1] + 1;
             }else{
                 K[1][j] = MAX( K[1][j-1], K[0][j] );
             }
@@ -103,27 +108,22 @@ void algorithmB( int m, int n, char* A, char* B, iMAT_ROW* LL ){
     *LL = K[1];
 }
 
-int algorithmC( int m, int n, char* A, char* B, char* C ){
-    debug("Start C:\n");
-    blankC( m, C ); 
-    debug("\tMade C\n");
-
+/** 
+ * Algoithm C takes two strings and their lengths and 
+ * produces the actual LCS. It will also return the number
+ * of (recursions that are taken).
+ **/
+int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C ){
     // If trivial then solve:
-    if( n == 0 ){ 
-        debug("\t<=Default Case\n");
-        return 0; 
-    }
+    if( n == 0 ){ return 0; }
     if( m == 1 ){ 
-        debug("\t<=M Case: ");
         for(int i=0; i<n; i++){
             if(A[0] == B[i]){
-                char ch[2] = { B[i], '\0' }; 
-                debug(ch);
-                strcat(C, ch); 
-                return 1; 
+                const char ch[] = { B[i], '\0' }; 
+                strcat(*C, ch);
+                break; //Return 1; if we are calculating 
             }
         }
-        debug("\n");
         return 0;
     }
     
@@ -132,56 +132,36 @@ int algorithmC( int m, int n, char* A, char* B, char* C ){
 
     // Break up A and reverse second half of A and B completely
     char *A_1i, A_mi1[m-i+1], *A_i1m; 
-        strsplit( m, i, A, A_1i, A_i1m );
-        debug("\t A Split successful\n");
+        strsplit( m, i, A, &A_1i, &A_i1m );
         strcpy(A_mi1, A_i1m);
-        debug("\t A Duplicate successful\n");
         strrev( A_mi1 );
-        debug("\t A Reverse successful\n");
-    char  B_n1[n]; 
+    char B_n1[n]; 
         strcpy(B_n1, B); 
         strrev( B_n1 );
-        debug("\t B Reverse successful\n");
 
     // Run Algorithm B over the broken up strings. We allocate a table for
     // the results. Each call returns a row.
     iMAT L = (iMAT)lcs_malloc( 2 * sizeof(iMAT_ROW) );
-    debug("\t L table creation successful\n");
-    algorithmB( i,   n, A_1i,  B,    &L[0] ); debug("\t First Algo B done.\n");
-    algorithmB( m-i, n, A_mi1, B_n1, &L[1] ); debug("\t Second Algo B done.\n");
+    algorithmB( i,   n, A_1i,  B,    &L[0] ); 
+    algorithmB( m-i, n, A_mi1, B_n1, &L[1] ); 
 
     // We calculate the Max LCS size for each sub string separately.
     int k=0,M=0;
-    debug("\t MAX Calculation\n");
-    debug_printarray(n+1,L[0]);debug_printarray(n+1,L[1]);
-    for(int j=0; j <= n; j++){ 
-        debug("\t\t M = ");
-        M = MAX( M, L[0][j] + L[1][n-j] ); //SEGFAULTING HERE
-        printf("%d\n",M);fflush(stdout);
-    }
-    debug("\t K Calculation\n");
+    for(int j=0; j <= n; j++){ M = MAX( M, L[0][j] + L[1][n-j] ); }
     for(int j=0; j <= n; j++){ if(L[0][j]+L[1][n-j] == M){ k=j; break;} }
 
     // Recursively check each substring and then concatenate the results.
-    char *C1, *C2; int a=0,b=0;
-    char *B_1k, *B_k1n; 
-    debug("\t BK Split\n");
-    strsplit( n, k, B, B_1k, B_k1n );
+    char *B_1k, *B_k1n; strsplit( n, k, B, &B_1k, &B_k1n );
 
-    debug("\t Starting recursion: ----\n");
-    a = algorithmC( i, k, A_1i, B_1k, C1 ); debug("\t Finishing recursion1-----\n");
-    b = algorithmC( m-i, n-k, A_i1m, B_k1n, C2 );debug("\t Finishing recursion2-----\n");
+    int a = algorithmC( i, k, A_1i, B_1k, C ); 
+    int b = algorithmC( m-i, n-k, A_i1m, B_k1n, C );
     
-    // Concat results and return.
-    char T[a+b];
-    strcat( T, C1 );
-    strcat( T, C2 );
-    C = T;
-    debug("concat");
-    return a+b;
+    // Return the number of recursive steps
+    return a+b+2;
 }
 
-void strrev(char* p){
+/** In-place string reversal. Goes from either side to the middle. */
+void strrev( CSTR p ){
     char *q = p;
     while(q && *q) ++q;
     for(--q; p < q; ++p, --q)
@@ -190,38 +170,49 @@ void strrev(char* p){
         *p = *p ^ *q;
 }
 
-void strsplit( int len, int i, const char* s, char* front, char* back ) {
+/** Simple string splitting algorithm. */
+void strsplit( int len, int i, CSTR s, CSTR* front, CSTR* back ) {
     int bl = len-i;
-    front = malloc( (i+1)*sizeof(char) );
-    memcpy( front, s, i );
-    front[i] = '\0';
-    back = malloc( (bl+1)*sizeof(char) );
-    memcpy( back, s, bl );
-    back[bl]='\0';
+    char* bs = s+( i*sizeof(char) );
+    
+    char *f = (char*)malloc( (i+1)*sizeof(char) ); 
+    memcpy( f, s, i*sizeof(char) );
+    f[i] = '\0';
+    
+    char *b = (char*)malloc( (bl+1)*sizeof(char) );
+    memcpy( b, bs, bl*sizeof(char) );
+    b[bl]='\0';
+
+    *front = f;
+    *back = b;
 }
 
-void blankC( int max, char* C ){
-    C = malloc( (max+1) * sizeof(char) );
-    C[0] = '\0';
-}
-
-int Hirshberg( char* A, char* B, int m, int n, char* C ){
-    int lc; // Length of LCS String.
-
-    debug("Running Hirshberg.\n");
+/**
+ * A wrapper function for Algorithm C so that we can pass it 
+ * nicely into the timeit function. We have overridden algorithm
+ * C to return the number of recursions it performs instead of
+ * the LCS length. If we wanted to find LCS length at this point
+ * we can check C.
+ **/
+int Hirshberg( char* A, char* B, int m, int n, char** C ){
+    int r; // Number of recursions.
 
     // The Larger string should be in the A position.
-    if( m > n ) {
-        lc = algorithmC( m, n, A, B, C );
+    if( m >= n ) {
+        r = algorithmC( m, n, A, B, C );
     }else{
-        lc = algorithmC( n, m, B, A, C );
+        r = algorithmC( n, m, B, A, C );
     }
 
-    // TODO: Should we return the number of recursions instead?
-    return lc;
+//    debug("Found LCS is = "); debug(*C); debug("\n");
+
+    return r;
 }
 
-
+/**
+ * A main runner function that runner.py uses to execute LCS
+ * tests with the Hirshberg algorithm.
+ **/
 int main( int argc, char** argv ){
     
     int ittr, x, y;
@@ -239,7 +230,7 @@ int main( int argc, char** argv ){
     scanf( "%s %s", a, b );
 
     printf("Timing, Quadratic Time and Linear Space Algorithm (Hirshberg's):\n");
-    double avg = timeit( Hirshberg, ittr, a, b, x, y, ansref );
+    double avg = timeit( Hirshberg, ittr, a, b, x, y, &ansref );
 
     printf( "Dynamic Memory Allocated: %d bytes\n", memusage/ittr );
     printf( "Time Const: %e\n", avg / (x+y) );// Quadratic, so sum.

@@ -29,7 +29,7 @@ void print_lcs(int** b, char* X, int i, int j){
 }
 
 //LCS algorithm as on pg. 394 of textbook
-int lcs_dyn_prog(char* X, char* Y, int m, int n, char* ans){
+int lcs_dyn_prog(char* X, char* Y, int m, int n, char** ans){
 
     // Create 'C' and 'B' matrices
     int** c = (int**)lcs_malloc((m+1) * sizeof(int*));
@@ -102,7 +102,7 @@ int main(int argc, char** argv){
     //printf("%s\n%s\n", a,b);
 
     printf("Timing, Dynamic Programming implementation:\n");
-    double avg = timeit( lcs_dyn_prog, ittr, a, b, x, y, ansref );
+    double avg = timeit( lcs_dyn_prog, ittr, a, b, x, y, &ansref );
     
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     // Time complexity is Theta m*n
