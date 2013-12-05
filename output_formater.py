@@ -52,6 +52,7 @@ def print_longstring( row_size, num_row, s ):
     for _ in range(num_row):
         n = min(i+row_size, l)
         out+=s[i:n]+"\n"
+        i+=n
         if n==l:
             fin=True
             break
