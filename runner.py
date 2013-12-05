@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__usage__ = "%(prog)s [-h] [-v] [-a] [-s N ..] [-l] [-d N] [-r [[Min] Max] A] (-i | -c S S)"
+__usage__ = "%(prog)s [-h] [-v] [-a] [-s N ..] [-l] [-d N] ( -r [[Min] Max] A | -i | -c S S)"
 __version__ = "0.1"
 __description__ = """Runner script for the Fundamentals of Algorithms
 group project for timing and analyzing LCS functions.

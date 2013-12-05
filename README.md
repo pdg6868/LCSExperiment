@@ -5,9 +5,10 @@ To Build: `make`
 
 To Run, type: `./runner.py -h` for options.
 
-    usage: runner.py [-h] [-v] [-a] [-s N [N ...]] [-l] [-d N] (-i | -c S S)
+    usage: runner.py [-h] [-v] [-a] [-s N [N ...]] [-l] [-d N]
+                     (-i | -r RANDOM [RANDOM ...] | -c S S)
 
-    Runner script for the Fundamentals of Algorithms group project for timing
+    Runner script for the Fundamentals of Algorithms group project for timing 
     and analyzing LCS functions.
 
     optional arguments:
@@ -19,6 +20,9 @@ To Run, type: `./runner.py -h` for options.
       -l, --list            List runnable tests.
       -d N, --ittr N        The number of times to iterate
       -i, --stdin           Pipe strings via stdin rather than on command line.
+      -r RANDOM [RANDOM ...], --random RANDOM [RANDOM ...]
+                            Gen two random strings, within lengths Min and Max
+                            of alphabet.
       -c S S, --strings S S
                             Pass strings on the command line rather than via
                             stdin.

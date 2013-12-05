@@ -6,7 +6,7 @@
 
 int** arr;
 
-int lcs_memo( char *X, char *Y, int m, int n, char* ans)
+int lcs_memo( char *X, char *Y, int m, int n, char** ans)
 {
     if (m == 0 || n == 0)
         return 0;
@@ -43,7 +43,7 @@ int main(int argc, char** argv){
     //printf("%s\n%s\n", a,b);
     
     printf("Timing, Recursive with Memoization implementation:\n");
-    double avg = timeit( lcs_memo, ittr, a, b, x-1, y-1, ansref );
+    double avg = timeit( lcs_memo, ittr, a, b, x-1, y-1, &ansref );
     
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     // Time complexity is Theta m*n
