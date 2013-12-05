@@ -20,12 +20,23 @@
 #define MAX( X, Y ) ((X) > (Y) ? (X) : (Y))
 
 void algorithmA( int m, int n, char* A, char* B, iMAT L );
-void algorithmB( int m, int n, char* A, char* B, iMAT_ROW L );
+void algorithmB( int m, int n, char* A, char* B, iMAT_ROW* L );
 int algorithmC( int m, int n, char* A, char* B, char* C );
 int Hirshberg( char* A, char* B, char* LCS );
 void strrev( char* s );
 void strsplit( int len, int i, const char* s, char* f, char* b );
 void blankC( int max, char* C );
+
+void debug(const char* msg){
+    printf(msg);fflush(stdout);
+}
+void debug_printarray( const int l, const int* a ){
+    printf("[");
+    for( int i=0; i< l; i++){
+        printf("%d,",a[i]);
+    }
+    printf("]\n");fflush(stdout);
+}
 
 /**
  * Algorithm A takes two strings and creates table L which 
@@ -66,9 +77,10 @@ void algorithmA( int m, int n, char* A, char* B, iMAT L ){
  * Time Complexity: O(mn)
  * Space Complexity: O(m+n)
  **/
-void algorithmB( int m, int n, char* A, char* B, iMAT_ROW LL ){
+void algorithmB( int m, int n, char* A, char* B, iMAT_ROW* LL ){
     // Initialize temporary K table (size 2xN).
     iMAT K = (iMAT)lcs_malloc( 2 * sizeof(iMAT_ROW) );
+    K[0] = (iMAT_ROW)lcs_malloc( (n+1) * sizeof(int) );
     K[1] = (iMAT_ROW)lcs_malloc( (n+1) * sizeof(int) );
     for( int j=0; j<=n; j++ ){ K[0][j]=0; K[1][j]=0; }
     
@@ -88,22 +100,30 @@ void algorithmB( int m, int n, char* A, char* B, iMAT_ROW LL ){
     free(K[0]);
 
     // Note Return is just a single Row.
-    LL = K[1];
+    *LL = K[1];
 }
 
 int algorithmC( int m, int n, char* A, char* B, char* C ){
+    debug("Start C:\n");
     blankC( m, C ); 
-    
+    debug("\tMade C\n");
+
     // If trivial then solve:
-    if( n == 0 ){ return 0; }
+    if( n == 0 ){ 
+        debug("\t<=Default Case\n");
+        return 0; 
+    }
     if( m == 1 ){ 
+        debug("\t<=M Case: ");
         for(int i=0; i<n; i++){
             if(A[0] == B[i]){
                 char ch[2] = { B[i], '\0' }; 
+                debug(ch);
                 strcat(C, ch); 
                 return 1; 
             }
         }
+        debug("\n");
         return 0;
     }
     
@@ -111,37 +131,53 @@ int algorithmC( int m, int n, char* A, char* B, char* C ){
     int i = m/2;
 
     // Break up A and reverse second half of A and B completely
-    char *A_1i, *A_mi1, *A_i1m; 
+    char *A_1i, A_mi1[m-i+1], *A_i1m; 
         strsplit( m, i, A, A_1i, A_i1m );
+        debug("\t A Split successful\n");
         strcpy(A_mi1, A_i1m);
+        debug("\t A Duplicate successful\n");
         strrev( A_mi1 );
+        debug("\t A Reverse successful\n");
     char  B_n1[n]; 
         strcpy(B_n1, B); 
         strrev( B_n1 );
-    
+        debug("\t B Reverse successful\n");
+
     // Run Algorithm B over the broken up strings. We allocate a table for
     // the results. Each call returns a row.
     iMAT L = (iMAT)lcs_malloc( 2 * sizeof(iMAT_ROW) );
-    algorithmB( i,   n, A_1i,  B,    L[0] );
-    algorithmB( m-i, n, A_mi1, B_n1, L[1] );
+    debug("\t L table creation successful\n");
+    algorithmB( i,   n, A_1i,  B,    &L[0] ); debug("\t First Algo B done.\n");
+    algorithmB( m-i, n, A_mi1, B_n1, &L[1] ); debug("\t Second Algo B done.\n");
 
     // We calculate the Max LCS size for each sub string separately.
     int k=0,M=0;
-    for(int j=0; j <= n; j++){ M = MAX( M, L[0][j] + L[1][n-j] ); }
+    debug("\t MAX Calculation\n");
+    debug_printarray(n+1,L[0]);debug_printarray(n+1,L[1]);
+    for(int j=0; j <= n; j++){ 
+        debug("\t\t M = ");
+        M = MAX( M, L[0][j] + L[1][n-j] ); //SEGFAULTING HERE
+        printf("%d\n",M);fflush(stdout);
+    }
+    debug("\t K Calculation\n");
     for(int j=0; j <= n; j++){ if(L[0][j]+L[1][n-j] == M){ k=j; break;} }
 
     // Recursively check each substring and then concatenate the results.
     char *C1, *C2; int a=0,b=0;
-    char *B_1k, *B_k1n; strsplit( n, k, B, B_1k, B_k1n );
+    char *B_1k, *B_k1n; 
+    debug("\t BK Split\n");
+    strsplit( n, k, B, B_1k, B_k1n );
 
-    a = algorithmC( i, k, A_1i, B_1k, C1 );
-    b = algorithmC( m-i, n-k, A_i1m, B_k1n, C2 );
+    debug("\t Starting recursion: ----\n");
+    a = algorithmC( i, k, A_1i, B_1k, C1 ); debug("\t Finishing recursion1-----\n");
+    b = algorithmC( m-i, n-k, A_i1m, B_k1n, C2 );debug("\t Finishing recursion2-----\n");
     
     // Concat results and return.
     char T[a+b];
     strcat( T, C1 );
     strcat( T, C2 );
     C = T;
+    debug("concat");
     return a+b;
 }
 
@@ -174,6 +210,8 @@ int Hirshberg( char* A, char* B, char* C ){
     
     int m = strlen(A);
     int n = strlen(B);
+
+    debug("Running Hirshberg.\n");
 
     // The Larger string should be in the A position.
     if( m > n ) {
