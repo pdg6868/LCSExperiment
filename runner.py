@@ -5,10 +5,16 @@ __description__ = """Runner script for the Fundamentals of Algorithms
 group project for timing and analyzing LCS functions.
 """
 
+import re
 import random
 import argparse
 from subprocess import Popen, PIPE
-from output_formater import print_longstring
+from output_formater import print_longstring, print_table
+
+AlgorithmList = ["Naive Recursive algorithm",
+                 "Memoized Recursive algorithm", 
+                 "Dynamic Programming algorithm",
+                 "Quadratic-time linear-space algorithm" ];
 
 def setup_argparse():
     prsr = argparse.ArgumentParser( description=__description__,
@@ -20,6 +26,7 @@ def setup_argparse():
 
     # Can either input via std or on command line, but not both.
     inputGroup = prsr.add_mutually_exclusive_group(required=True)
+    inputGroup.add_argument('-m', '--maxrun', action='store_true', help="Get the max character lengths each algorithm can run in 10s.")
     inputGroup.add_argument('-i', '--stdin', action='store_true', help="Pipe strings via stdin rather than on command line.")
     inputGroup.add_argument('-r', '--random', nargs='+', default=[], help="Gen two random strings, within lengths Min and Max of alphabet.")
     inputGroup.add_argument('-c', '--strings', nargs=2, metavar='S',type=str,help="Pass strings on the command line rather than via stdin.")
@@ -27,15 +34,20 @@ def setup_argparse():
     return prsr
 
 def list_tests():
-    print """The following are the Versions of LCS we have available:
-    1 - Naive Recursive algorithm
-    2 - Memoized Recursive algorithm
-    3 - Dynamic Programming algorithm
-    4 - Quadratic-time linear-space algorithm
-    """
+    print "The following are the Versions of LCS we have available:"
+    for i in range( len( AlgorithmList ) ):
+        print "\t",i," - ", AlgorithmList[i]
 
 def sample( l, c ):
     return "".join([random.choice(l) for _ in range(c)])
+
+def run( index, itter, str1, str2 ):
+    p = Popen( "./lcs{0} {1}".format( index, itter), 
+               stdin=PIPE, stdout=PIPE, 
+               shell=True, close_fds=True )
+    p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  
+                                              str1, str2 ) )
+    return p.communicate()
 
 def random_strs( arg ):
     mi,ma,alpha=1,100,"01"
@@ -59,6 +71,36 @@ def random_strs( arg ):
     s2 = sample( alpha, db )
     return (s1, s2)
 
+def get_runtime( out ):
+    match = re.search(r"\(in ms\):\s?([.\d]+)", out)
+    if match:
+        time = match.group(1)
+        return float(time)
+    else: raise Exception("Could not find runtime in output: "+out)
+
+def find_max( testID ):
+    threshold = 10; # 10 Seconds.
+    curStart = [30,3000,9000,30000][testID]; # Higher up means quicker. TODO: set better starting points
+    curOut = 0;
+    s1,s2 = random_strs( [ curStart, "01" ] )
+    update = lambda x,y: (x+"1",y+"1")
+    while curOut < threshold:
+        s1,s2=update(s1,s2)
+        (out,_) = run( testID, 1, s1, s2 )
+        curOut = get_runtime(out)
+    return len(s1)
+
+def run_maxruntest( args ):
+    global AlgorithmList
+    runlist = args.select
+    if( args.all ):
+        runlist = [1,2,3,4]
+    maxlist = []
+    for index in runlist:
+        maxlist.append( find_max( index ) )
+    print_table( maxlist, column_names=["Size of input String"],
+                          row_names=AlgorithmList )
+
 def main():
     pr = setup_argparse()
     args = pr.parse_args()
@@ -66,7 +108,10 @@ def main():
     if( args.list ):
         list_tests()
         return
-    
+    if( args.maxrun ):
+        run_maxruntest( args )
+        return
+
     itter   = args.ittr
     runlist = args.select
     if( args.all ):
@@ -85,9 +130,7 @@ def main():
         str1,str2 = tuple(args.strings)
 
     for t in runlist:
-         p = Popen( "./lcs{0} {1}".format( t, itter), stdin=PIPE, stdout=PIPE, shell=True, close_fds=True )
-         p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  str1, str2 ) )
-         (out, err) = p.communicate()
+         (out, err) = run( t, itter, str1, str2)
          print out
    
 if __name__ == "__main__": main();
