@@ -22,7 +22,7 @@
 void algorithmA( int m, int n, char* A, char* B, iMAT L );
 void algorithmB( int m, int n, char* A, char* B, iMAT_ROW L );
 int algorithmC( int m, int n, char* A, char* B, char* C );
-int Hirshberg( char* A, char* B, char* LCS );
+int Hirshberg( char* A, char* B, int m, int n, char* LCS );
 void strrev( char* s );
 void strsplit( int len, int i, const char* s, char* f, char* b );
 void blankC( int max, char* C );
@@ -169,11 +169,8 @@ void blankC( int max, char* C ){
     C[0] = '\0';
 }
 
-int Hirshberg( char* A, char* B, char* C ){
+int Hirshberg( char* A, char* B, int m, int n, char* C ){
     int lc; // Length of LCS String.
-    
-    int m = strlen(A);
-    int n = strlen(B);
 
     // The Larger string should be in the A position.
     if( m > n ) {
@@ -204,7 +201,7 @@ int main( int argc, char** argv ){
     scanf( "%s %s", a, b );
 
     printf("Timing, Quadratic Time and Linear Space Algorithm (Hirshberg's):\n");
-    double avg = timeit( Hirshberg, ittr, a, b, ansref );
+    double avg = timeit( Hirshberg, ittr, a, b, x, y, ansref );
 
     printf( "Dynamic Memory Allocated: %d bytes\n", memusage/ittr );
     printf( "Time Const: %e\n", avg / (x+y) );// Quadratic, so sum.
