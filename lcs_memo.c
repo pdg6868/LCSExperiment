@@ -5,23 +5,18 @@
 #include "timeit.h"
 
 int** arr;
-int m;
-int n;
 
-int lcs_memo( char *A, char *B, char* ans)
+int lcs_memo( char *X, char *Y, int m, int n, char* ans)
 {
-    /*
-    if (*A == '\0' || *B == '\0')
+    if (m == 0 || n == 0)
         return 0;
     if (arr[m][n]==0){
-        if (*A == *B)
-            return 1 + lcs_memo(A+1, B+1, ans);
+        if (X[m-1] == Y[n-1])
+            arr[m][n] = 1 + lcs_memo(X, Y, m-1, n-1, ans);
         else
-            return MAX(lcs_memo(A+1,B, ans), lcs_memo(A,B+1, ans));
+            arr[m][n] = MAX(lcs_memo(X, Y, m, n-1, ans), lcs_memo(X, Y, m-1, n, ans));
     }
     return arr[m][n];
-     */
-    return 0;
 }
 
 int main(int argc, char** argv){
@@ -37,16 +32,18 @@ int main(int argc, char** argv){
     
     scanf("%s %s", a, b);
     
-    m=x;n=y;
     arr = (int**)lcs_malloc((x) * sizeof(int*));
     for(int i=0; i < x; i++) {
         arr[i] = (int *)lcs_malloc(sizeof(int)*(y));
+        for(int j=0; j<y; j++){
+            arr[i][j] = 0;
+        }
     }
     
     //printf("%s\n%s\n", a,b);
     
     printf("Timing, Recursive with Memoization implementation:\n");
-    double avg = timeit( lcs_memo, ittr, a, b, ansref );
+    double avg = timeit( lcs_memo, ittr, a, b, x-1, y-1, ansref );
     
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     // Time complexity is Theta m*n

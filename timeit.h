@@ -20,9 +20,10 @@ struct rusage ruse;
  * the inputs `s1` and `s2`. It will return the difference in time, 
  * and leaves averaging up to the caller.
  *********************************************************************/
-double timeit( int (*lcs)(char*,char*,char*),
+double timeit( int (*lcs)(char*,char*,int,int,char*),
                int ittr, 
                char* s1, char* s2,
+               int m, int n,
                char* ans )
 {
     double start, end;
@@ -32,7 +33,7 @@ double timeit( int (*lcs)(char*,char*,char*),
     // Loop over lcs calculation.
     start = CPUTIME;
     while( i<ittr ){
-        numrecurse = lcs(s1, s2, ans);
+        numrecurse = lcs(s1, s2, m, n, ans);
         i++;
     }
     end = CPUTIME;

@@ -1,6 +1,5 @@
 //
-//  lcs.c
-//  Multiple Implemetations of the LCS algorithm
+//  lcs_rec_naive.c
 //
 //  Authors: Pat Gillis and Alex Dean
 //
@@ -14,14 +13,14 @@
 
 
 //Basic Recursive as Implied by 15.1 on pg. 392
-int lcs_naive(char* A, char* B, char* ans)
+int lcs_naive(char* X, char* Y, int m, int n, char* ans)
 {
-	if (*A == '\0' || *B == '\0')
+	if (m == 0 || n == 0)
         return 0;
-	else if (*A == *B)
-        return 1 + lcs_naive(A+1, B+1, ans);
-	else
-        return MAX(lcs_naive(A+1,B, ans), lcs_naive(A,B+1, ans));
+    if(X[m-1] == Y[n-1])
+        return 1 + lcs_naive(X, Y, m-1, n-1, ans);
+    else
+        return MAX(lcs_naive(X, Y, m, n-1, ans), lcs_naive(X, Y, m-1, n, ans));
 }
 
 //This main assumes that str1 is in argv[1]
@@ -40,7 +39,7 @@ int main(int argc, char** argv){
     scanf("%s %s", a, b);
     
     printf("Timing, Nieve Recursive implementation:\n");
-    double avg = timeit( lcs_naive, ittr, a, b, ansref);
+    double avg = timeit( lcs_naive, ittr, a, b, x, y, ansref);
     extern int memusage;
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
     // Time complexity is O(2^{m*n})
