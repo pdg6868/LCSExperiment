@@ -79,6 +79,7 @@ lcs_memo:	lcs_memo.o $(OBJFILES)
 # Dependencies
 #
 
+lcs_memo.o:	lcs.h timeit.h
 lcs_dyn_prog.o:	lcs.h timeit.h
 lcs_rec_naive.o:	lcs.h timeit.h
 
