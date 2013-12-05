@@ -28,7 +28,6 @@ int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C );
 int Hirshberg( CSTR A, CSTR B, int m, int n, CSTR* LCS );
 void strrev( CSTR s );
 void strsplit( int len, int i, CSTR s, CSTR* f, CSTR* b );
-void blankC( int max, CSTR* C );
 
 void debug(const char* msg){
     printf(msg);fflush(stdout);
@@ -121,7 +120,7 @@ int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C ){
             if(A[0] == B[i]){
                 const char ch[] = { B[i], '\0' }; 
                 strcat(*C, ch);
-                break; //Return 1; if we are calculating 
+                break; 
             }
         }
         return 0;
@@ -149,6 +148,7 @@ int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C ){
     int k=0,M=0;
     for(int j=0; j <= n; j++){ M = MAX( M, L[0][j] + L[1][n-j] ); }
     for(int j=0; j <= n; j++){ if(L[0][j]+L[1][n-j] == M){ k=j; break;} }
+    free(L[0]);free(L[1]);free(L);
 
     // Recursively check each substring and then concatenate the results.
     char *B_1k, *B_k1n; strsplit( n, k, B, &B_1k, &B_k1n );
@@ -196,6 +196,7 @@ void strsplit( int len, int i, CSTR s, CSTR* front, CSTR* back ) {
  **/
 int Hirshberg( char* A, char* B, int m, int n, char** C ){
     int r; // Number of recursions.
+    strcpy(*C, ""); // Initialize C so we know where to concat strings.
 
     // The Larger string should be in the A position.
     if( m >= n ) {
