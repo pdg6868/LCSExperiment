@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "lcs.h"
 #include "timeit.h"
 
@@ -39,9 +40,12 @@ int main(int argc, char** argv){
     scanf("%s %s", a, b);
     
     printf("Timing, Nieve Recursive implementation:\n");
-    timeit( lcs_naive, ittr, a, b, ansref);
+    double avg = timeit( lcs_naive, ittr, a, b, ansref);
     extern int memusage;
     printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
+    // Time complexity is O(2^{m*n})
+    // So time const is avgTime/(2^{m*n})
+    printf("Time Const: %e\n", avg/(pow(2,x*y)));
     free( ansref );
 
     return 0;
