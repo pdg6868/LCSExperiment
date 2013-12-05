@@ -105,6 +105,9 @@ void algorithmB( int m, int n, CSTR A, CSTR B, iMAT_ROW* LL ){
 
     // Note Return is just a single Row.
     *LL = K[1];
+
+    // Free Pointer to table.
+    free( K );
 }
 
 /** 
@@ -148,14 +151,17 @@ int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C ){
     int k=0,M=0;
     for(int j=0; j <= n; j++){ M = MAX( M, L[0][j] + L[1][n-j] ); }
     for(int j=0; j <= n; j++){ if(L[0][j]+L[1][n-j] == M){ k=j; break;} }
-    free(L[0]);free(L[1]);free(L);
+    free(L[0]); free(L[1]); free(L);
 
     // Recursively check each substring and then concatenate the results.
     char *B_1k, *B_k1n; strsplit( n, k, B, &B_1k, &B_k1n );
 
     int a = algorithmC( i, k, A_1i, B_1k, C ); 
     int b = algorithmC( m-i, n-k, A_i1m, B_k1n, C );
-    
+
+    free( A_1i ); free( A_i1m );
+    free( B_1k ); free( B_k1n );
+
     // Return the number of recursive steps
     return a+b+2;
 }
@@ -236,6 +242,7 @@ int main( int argc, char** argv ){
     printf( "Dynamic Memory Allocated: %d bytes\n", memusage/ittr );
     printf( "Time Const: %e\n", avg / (x+y) );// Quadratic, so sum.
 
+    free( a ); free( b );
     free( ansref );
     return 0;
 }
