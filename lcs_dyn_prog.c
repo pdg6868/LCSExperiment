@@ -109,7 +109,7 @@ int main(int argc, char** argv){
     // So time const is avgTime/(m*n)
     printf("Time Const: %e\n", avg/(x*y));
     
-    
+    free( a ); free( b ); 
     free( ansref );
 
     return 0;

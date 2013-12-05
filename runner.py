@@ -23,6 +23,7 @@ def setup_argparse():
     prsr.add_argument('-s', '--select',metavar='N',default=[1], nargs='+', type=int, help="Pass a list of tests to run by number.")
     prsr.add_argument('-l', '--list', action='store_true', help="List runnable tests.")
     prsr.add_argument('-d', '--ittr', action='store', default=100, metavar='N',type=long, help="The number of times to iterate")
+    prsr.add_argument('--dbg', action='store_true', help="Turn on valgrind support to test for memory leaks.")
 
     # Can either input via std or on command line, but not both.
     inputGroup = prsr.add_mutually_exclusive_group(required=True)
@@ -41,8 +42,9 @@ def list_tests():
 def sample( l, c ):
     return "".join([random.choice(l) for _ in range(c)])
 
-def run( index, itter, str1, str2 ):
-    p = Popen( "./lcs{0} {1}".format( index, itter), 
+def run( index, itter, str1, str2, dbg = False ):
+    v = "valgrind " if dbg else ""
+    p = Popen( v+"./lcs{0} {1}".format( index, itter), 
                stdin=PIPE, stdout=PIPE, 
                shell=True, close_fds=True )
     p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  
@@ -130,7 +132,7 @@ def main():
         str1,str2 = tuple(args.strings)
 
     for t in runlist:
-         (out, err) = run( t, itter, str1, str2)
+         (out, err) = run( t, itter, str1, str2, args.dbg )
          print out
    
 if __name__ == "__main__": main();

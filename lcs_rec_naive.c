@@ -29,7 +29,7 @@ int lcs_naive(char* X, char* Y, int m, int n, char** ans)
 int main(int argc, char** argv){
 
     int ittr,x,y;
-    sscanf (argv[1], "%i", &ittr);
+    sscanf(argv[1], "%i", &ittr);
     scanf("%d %d", &x, &y);
 
     char* a = (char*)malloc(x * sizeof(char)+1);
@@ -45,6 +45,8 @@ int main(int argc, char** argv){
     // Time complexity is O(2^{m*n})
     // So time const is avgTime/(2^{m*n})
     printf("Time Const: %e\n", avg/(pow(2,x*y)));
+
+    free( a ); free( b );
     free( ansref );
 
     return 0;
