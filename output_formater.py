@@ -37,7 +37,7 @@ def print_table( rows, column_names=[], row_names=[] ):
     if len(row_names) == num_rows:
         newrows = [ [h]+row for (h,row) in zip( row_names, rows ) ]
         if len(column_names)+1 == len(rows[0]):
-            column_names=['']+column_names
+            column_names=['_']+column_names
     if len(column_names) < len(rows[0]):
         n = len(rows[0])-len(column_names)
         column_names+=""*n
