@@ -88,8 +88,8 @@ int lcs_dyn_prog(char* X, char* Y, int m, int n, char** ans){
 int main(int argc, char** argv){
    
     int ittr, x, y;
-    extern int memusage;
-    memusage = 0;
+    extern ulong memusage;
+    memusage = 0L;
     sscanf (argv[1], "%i", &ittr);
    
     scanf("%d %d", &x, &y);
@@ -104,7 +104,7 @@ int main(int argc, char** argv){
     printf("Timing, Dynamic Programming implementation:\n");
     double avg = timeit( lcs_dyn_prog, ittr, a, b, x, y, &ansref );
     
-    printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
+    printf("Dynamic Memory Allocated: %lu bytes\n", memusage/ittr);
     // Time complexity is Theta m*n
     // So time const is avgTime/(m*n)
     printf("Time Const: %e\n", avg/(x*y));
