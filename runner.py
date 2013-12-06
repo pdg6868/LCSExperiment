@@ -21,12 +21,12 @@ def setup_argparse():
                                     version=__version__ )
     prsr.add_argument('-a', '--all', action='store_true', help="Run all LCS versions in sequence.")
     prsr.add_argument('-s', '--select',metavar='N',default=[1], nargs='+', type=int, help="Pass a list of tests to run by number.")
-    prsr.add_argument('-l', '--list', action='store_true', help="List runnable tests.")
     prsr.add_argument('-d', '--ittr', action='store', default=100, metavar='N',type=long, help="The number of times to iterate")
     prsr.add_argument('--dbg', action='store_true', help="Turn on valgrind support to test for memory leaks.")
 
     # Can either input via std or on command line, but not both.
     inputGroup = prsr.add_mutually_exclusive_group(required=True)
+    inputGroup.add_argument('-l', '--list', action='store_true', help="List runnable tests.")
     inputGroup.add_argument('-m', '--maxrun', action='store_true', help="Get the max character lengths each algorithm can run in 10s.")
     inputGroup.add_argument('-i', '--stdin', action='store_true', help="Pipe strings via stdin rather than on command line.")
     inputGroup.add_argument('-r', '--random', nargs='+', default=[], help="Gen two random strings, within lengths Min and Max of alphabet.")
@@ -37,7 +37,7 @@ def setup_argparse():
 def list_tests():
     print "The following are the Versions of LCS we have available:"
     for i in range( len( AlgorithmList ) ):
-        print "\t",i," - ", AlgorithmList[i]
+        print "\t",(i+1)," - ", AlgorithmList[i]
 
 def sample( l, c ):
     return "".join([random.choice(l) for _ in range(c)])
@@ -82,7 +82,7 @@ def get_runtime( out ):
 
 def find_max( testID ):
     threshold = 10; # 10 Seconds.
-    curStart = [30,3000,9000,30000][testID]; # Higher up means quicker. TODO: set better starting points
+    curStart = [30,3000,9000,30000][testID-1]; # Higher up means quicker. TODO: set better starting points
     curOut = 0;
     s1,s2 = random_strs( [ curStart, "01" ] )
     update = lambda x,y: (x+"1",y+"1")

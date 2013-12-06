@@ -28,6 +28,8 @@ int lcs_naive(char* X, char* Y, int m, int n, char** ans)
 // This is ensured by the main script
 int main(int argc, char** argv){
 
+    extern ulong memusage;
+    memusage = 0L;
     int ittr,x,y;
     sscanf(argv[1], "%i", &ittr);
     scanf("%d %d", &x, &y);
@@ -40,8 +42,7 @@ int main(int argc, char** argv){
     
     printf("Timing, Nieve Recursive implementation:\n");
     double avg = timeit( lcs_naive, ittr, a, b, x, y, &ansref);
-    extern int memusage;
-    printf("Dynamic Memory Allocated: %d bytes\n", memusage/ittr);
+    printf("Dynamic Memory Allocated: %lu bytes\n", memusage/ittr);
     // Time complexity is O(2^{m*n})
     // So time const is avgTime/(2^{m*n})
     printf("Time Const: %e\n", avg/(pow(2,x*y)));

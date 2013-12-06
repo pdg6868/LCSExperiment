@@ -99,13 +99,12 @@ void algorithmB( int m, int n, CSTR A, CSTR B, iMAT_ROW* LL ){
             }
         }
     }
-   
-    // Clean up allocated memory. 
-    free(K[0]);
-
+ 
     // Note Return is just a single Row.
     *LL = K[1];
-
+  
+    // Clean up allocated memory. 
+    free(K[0]);
     // Free Pointer to table.
     free( K );
 }
@@ -156,14 +155,14 @@ int algorithmC( int m, int n, CSTR A, CSTR B, CSTR* C ){
     // Recursively check each substring and then concatenate the results.
     char *B_1k, *B_k1n; strsplit( n, k, B, &B_1k, &B_k1n );
 
-    int a = algorithmC( i, k, A_1i, B_1k, C ); 
-    int b = algorithmC( m-i, n-k, A_i1m, B_k1n, C );
+    int rec = algorithmC( i, k, A_1i, B_1k, C )
+            + algorithmC( m-i, n-k, A_i1m, B_k1n, C );
 
     free( A_1i ); free( A_i1m );
     free( B_1k ); free( B_k1n );
 
     // Return the number of recursive steps
-    return a+b+2;
+    return rec+2;
 }
 
 /** In-place string reversal. Goes from either side to the middle. */
@@ -178,19 +177,15 @@ void strrev( CSTR p ){
 
 /** Simple string splitting algorithm. */
 void strsplit( int len, int i, CSTR s, CSTR* front, CSTR* back ) {
-    int bl = len-i;
+    int bl = len-i+1;
     char* bs = s+( i*sizeof(char) );
     
-    char *f = (char*)malloc( (i+1)*sizeof(char) ); 
-    memcpy( f, s, i*sizeof(char) );
-    f[i] = '\0';
+    *front = (char*)lcs_malloc( (i+1)*sizeof(char) ); 
+    memcpy( *front, s, i*sizeof(char) );
+    (*front)[i] = '\0';
     
-    char *b = (char*)malloc( (bl+1)*sizeof(char) );
-    memcpy( b, bs, bl*sizeof(char) );
-    b[bl]='\0';
-
-    *front = f;
-    *back = b;
+    *back = (char*)lcs_malloc( bl*sizeof(char) );
+    memcpy( *back, bs, bl*sizeof(char) ); // NULL char comes free from s.
 }
 
 /**
@@ -224,8 +219,8 @@ int main( int argc, char** argv ){
     
     int ittr, x, y;
 
-    extern int memusage;
-    memusage = 0;
+    extern ulong memusage;
+    memusage = 0L;
 
     sscanf( argv[1], "%i", &ittr);
     scanf("%d %d", &x, &y);
@@ -239,7 +234,7 @@ int main( int argc, char** argv ){
     printf("Timing, Quadratic Time and Linear Space Algorithm (Hirshberg's):\n");
     double avg = timeit( Hirshberg, ittr, a, b, x, y, &ansref );
 
-    printf( "Dynamic Memory Allocated: %d bytes\n", memusage/ittr );
+    printf( "Dynamic Memory Allocated: %lu bytes\n", memusage/ittr );
     printf( "Time Const: %e\n", avg / (x+y) );// Quadratic, so sum.
 
     free( a ); free( b );
