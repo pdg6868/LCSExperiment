@@ -49,9 +49,7 @@ def sample( l, c ):
 def run( index, itter, str1, str2, dbg = False, timer=False ):
     def kill_on_timeout( p ):
         if p.poll() == None:
-            try: 
-                os.killpg( p.pid, signal.SIGTERM )
-                print "killed"
+            try: os.killpg( p.pid, signal.SIGTERM )
             except: pass
 
     def target(res):
@@ -109,16 +107,16 @@ def get_runtime( out ):
 
 def find_max( testID ):
     threshold = 10; # 10 Seconds.
+    print "Finding max input sizes for time threshold =", threshold
     curOut = 0;
-    curStart = [23,23000,23000,23000][testID-1]; # Higher up means quicker. 
+    curStart = [26,23000,23000,23000][testID-1]; # Higher up means quicker. 
     s1,s2 = random_strs( [ curStart-1, "01" ] )
     update = lambda x,y: (x+"1",y+"1") # TODO: need a better update function.
     while curOut < threshold:
         s1,s2=update(s1,s2)
-        print "running with",len(s1),",",len(s2)
+        print "running", testID,"with length",len(s1)
         x = run( testID, 1, s1, s2 , timer=True )
-        if x == None:
-            print "x was none"
+        if x == None: 
             curOut = 9999
         else:
             (out,_) = x
