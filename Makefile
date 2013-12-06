@@ -43,7 +43,7 @@ COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
 CPP = $(CPP) $(CPPFLAGS)
 ########## Default flags (redefine these with a header.mak file if desired)
 CXXFLAGS =	-ggdb
-CFLAGS =	-ggdb -std=c99
+CFLAGS =	-ggdb -std=c99 #-O5
 CLIBFLAGS =	-lm
 CCLIBFLAGS =	
 ########## End of default flags
@@ -108,3 +108,5 @@ realclean:        clean
 	-/bin/rm -rf lcs2
 	-/bin/rm -rf lcs3
 	-/bin/rm -rf lcs4
+	-/bin/rm -rf *.pyc
+
