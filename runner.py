@@ -5,9 +5,13 @@ __description__ = """Runner script for the Fundamentals of Algorithms
 group project for timing and analyzing LCS functions.
 """
 
+import os
 import re
+import Queue
 import random
+import signal
 import argparse
+import threading
 from subprocess import Popen, PIPE
 from output_formater import print_longstring, print_table
 
@@ -20,7 +24,7 @@ def setup_argparse():
     prsr = argparse.ArgumentParser( description=__description__,
                                     version=__version__ )
     prsr.add_argument('-a', '--all', action='store_true', help="Run all LCS versions in sequence.")
-    prsr.add_argument('-s', '--select',metavar='N',default=[1], nargs='+', type=int, help="Pass a list of tests to run by number.")
+    prsr.add_argument('-s', '--select',metavar='N',default=[1,2,3,4], nargs='+', type=int, help="Pass a list of tests to run by number.")
     prsr.add_argument('-d', '--ittr', action='store', default=100, metavar='N',type=long, help="The number of times to iterate")
     prsr.add_argument('--dbg', action='store_true', help="Turn on valgrind support to test for memory leaks.")
 
@@ -42,14 +46,36 @@ def list_tests():
 def sample( l, c ):
     return "".join([random.choice(l) for _ in range(c)])
 
-def run( index, itter, str1, str2, dbg = False ):
-    v = "valgrind " if dbg else ""
-    p = Popen( v+"./lcs{0} {1}".format( index, itter), 
-               stdin=PIPE, stdout=PIPE, 
-               shell=True, close_fds=True )
-    p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  
+def run( index, itter, str1, str2, dbg = False, timer=False ):
+    def kill_on_timeout( p ):
+        if p.poll() == None:
+            try: 
+                os.killpg( p.pid, signal.SIGTERM )
+                print "killed"
+            except: pass
+
+    def target(res):
+        v = "valgrind " if dbg else ""
+        p = Popen( v+"./lcs{0} {1}".format( index, itter ), 
+                   stdin=PIPE, stdout=PIPE, 
+                   shell=True, preexec_fn=os.setsid )
+        if timer: t = threading.Timer( 11.0, kill_on_timeout, [p])
+        p.stdin.write( "{0} {1}\n{2} {3}".format( len(str1), len(str2),  
                                               str1, str2 ) )
-    return p.communicate()
+        if timer: t.start()
+        try:
+            res.put( p.communicate() )
+        except: pass
+        finally:
+            if timer: t.cancel()
+    
+    res = Queue.Queue( 1 )
+    thread = threading.Thread(target=target, args=[res])
+    thread.start()
+    thread.join()
+
+    if res.empty(): return None
+    else: return res.get()
 
 def random_strs( arg ):
     mi,ma,alpha=1,100,"01"
@@ -78,19 +104,26 @@ def get_runtime( out ):
     if match:
         time = match.group(1)
         return float(time)
-    else: raise Exception("Could not find runtime in output: "+out)
+    else:
+        return 999.0 # Timeout possibility.
 
 def find_max( testID ):
     threshold = 10; # 10 Seconds.
-    curStart = [30,3000,9000,30000][testID-1]; # Higher up means quicker. TODO: set better starting points
     curOut = 0;
-    s1,s2 = random_strs( [ curStart, "01" ] )
-    update = lambda x,y: (x+"1",y+"1")
+    curStart = [23,23000,23000,23000][testID-1]; # Higher up means quicker. 
+    s1,s2 = random_strs( [ curStart-1, "01" ] )
+    update = lambda x,y: (x+"1",y+"1") # TODO: need a better update function.
     while curOut < threshold:
         s1,s2=update(s1,s2)
-        (out,_) = run( testID, 1, s1, s2 )
-        curOut = get_runtime(out)
-    return len(s1)
+        print "running with",len(s1),",",len(s2)
+        x = run( testID, 1, s1, s2 , timer=True )
+        if x == None:
+            print "x was none"
+            curOut = 9999
+        else:
+            (out,_) = x
+            curOut = get_runtime(out)
+    return len(s1)-1
 
 def run_maxruntest( args ):
     global AlgorithmList
@@ -99,9 +132,10 @@ def run_maxruntest( args ):
         runlist = [1,2,3,4]
     maxlist = []
     for index in runlist:
-        maxlist.append( find_max( index ) )
-    print_table( maxlist, column_names=["Size of input String"],
-                          row_names=AlgorithmList )
+        m = find_max(index)
+        print "Max Input size for",AlgorithmList[index-1],"is",m
+        maxlist.append( [m] )
+    print_table( maxlist, column_names=['InputSize'])
 
 def main():
     pr = setup_argparse()
